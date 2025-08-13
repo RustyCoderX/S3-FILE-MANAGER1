@@ -1,165 +1,3 @@
-/* 
-"use client";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Folder, FileText } from "lucide-react";
-
-type S3Object = {
-  Key: string;
-  Size: number;
-  LastModified: string;
-};
-
-type S3Response = {
-  files: S3Object[];
-  folder: string[];
-};
-
-export default function S3FileExplorer({ data }: { data: S3Response }) {
-  return (
-    <Card className="max-w-lg mx-auto mt-8">
-      <CardHeader>
-        <CardTitle>S3 Bucket Contents</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          {data.folder.length > 0 && (
-            <div>
-              <div className="font-semibold text-gray-700 mb-1">Folders</div>
-              <ul>
-                {data.folder.map((folder) => (
-                  <li key={folder} className="flex items-center gap-2 text-blue-600">
-                    <Folder className="w-5 h-5" />
-                    {folder}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {data.files.length > 0 && (
-            <div>
-              <div className="font-semibold text-gray-700 mb-1">Files</div>
-              <ul>
-                {data.files.map((file) => (
-                  <li key={file.Key} className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-gray-500" />
-                    <span className="flex-1">{file.Key}</span>
-                    <span className="text-xs text-gray-400">
-                      {(file.Size / 1024 / 1024).toFixed(2)} MB
-                    </span>
-                    <span className="text-xs text-gray-400 ml-2">
-                      {new Date(file.LastModified).toLocaleDateString()}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {data.files.length === 0 && data.folder.length === 0 && (
-            <div className="text-gray-500 text-center">No files or folders found.</div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-} */
-/* 
-"use client";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Folder, FileText, Download } from "lucide-react";
-
-type S3Object = {
-  Key: string;
-  Size: number;
-  LastModified: string;
-};
-
-type S3Response = {
-  files: S3Object[];
-  folder: string[];
-};
-
-export default function S3FileExplorer({ data }: { data: S3Response }) {
-  // Replace with your actual download logic or link
-  const getDownloadUrl = (key: string) => `/api/download?key=${encodeURIComponent(key)}`;
-
-  return (
-    <Card className="max-w-xl w-full mx-auto mt-8 bg-white/70 backdrop-blur-md border border-gray-200 shadow-2xl transition-all animate-fade-in">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-          <FileText className="w-6 h-6 text-blue-600" />
-          S3 Bucket Contents
-        </CardTitle>
-        <div className="text-sm text-gray-600 mt-1">Browse your files and folders stored in S3</div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {data.folder.length > 0 && (
-            <div>
-              <div className="font-semibold text-gray-800 mb-1">Folders</div>
-              <ul>
-                {data.folder.map((folder) => (
-                  <li
-                    key={folder}
-                    className="flex items-center gap-2 text-gray-800 hover:bg-gray-100 rounded px-2 py-1 cursor-pointer transition"
-                  >
-                    <Folder className="w-5 h-5 text-gray-500" />
-                    <span className="hover:underline">{folder}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {data.files.length > 0 && (
-            <div>
-              <div className="font-semibold text-gray-800 mb-1">Files</div>
-              <ul>
-                {data.files.map((file) => (
-                  <li
-                    key={file.Key}
-                    className="flex items-center gap-2 hover:bg-gray-100 rounded px-2 py-1 transition group"
-                  >
-                    <FileText className="w-5 h-5 text-gray-500" />
-                    <a
-                      href={getDownloadUrl(file.Key)}
-                      className="flex-1 font-medium text-gray-900 hover:underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {file.Key}
-                    </a>
-                    <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded">
-                      <span className="font-semibold">Size:</span> {(file.Size / 1024 / 1024).toFixed(2)} MB
-                    </span>
-                    <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded ml-2">
-                      <span className="font-semibold">Date:</span> {new Date(file.LastModified).toLocaleDateString()}
-                    </span>
-                    <a
-                      href={getDownloadUrl(file.Key)}
-                      className="ml-2 text-gray-500 hover:text-blue-600 transition"
-                      title="Download"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Download className="w-5 h-5" />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {data.files.length === 0 && data.folder.length === 0 && (
-            <div className="text-gray-500 text-center">No files or folders found.</div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-} */
-
-  
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -189,34 +27,32 @@ type FolderState = {
 const getFolderName = (prefix: string) =>
   prefix.replace(/\/$/, "").split("/").pop() || prefix;
 
-export default function S3FileExplorer({ data }: { data: S3Response }) {
+export default function S3FileExplorer({ data }: { data?: S3Response }) {
   const [folders, setFolders] = useState<FolderState>({});
-  const [rootData, setRootData] = useState<S3Response>(data);
+  const [rootData, setRootData] = useState<S3Response>(
+    data || { files: [], folder: [] }
+  );
   const [uploading, setUploading] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Always fetch latest data on mount
-    const fetchRootData = async () => {
-      const res = await fetch("/api/objects");
-      const newData = await res.json();
-      setRootData(newData);
-    };
-    fetchRootData();
-  }, []);
-
-  const getDownloadUrl = (key: string) => `/api/download?key=${encodeURIComponent(key)}`;
 
   // Fetch root files/folders
   const fetchRootData = async () => {
     const res = await fetch("/api/objects");
-    const newData = await res.json();
+    const newData: S3Response = await res.json();
     setRootData(newData);
   };
+
+  // Always fetch latest data on mount
+  useEffect(() => {
+    fetchRootData();
+  }, []);
+
+  const getDownloadUrl = (key: string) =>
+    `/api/download?key=${encodeURIComponent(key)}`;
 
   // Fetch folder contents
   const fetchFolderData = async (folder: string) => {
     const res = await fetch(`/api/objects?prefix=${encodeURIComponent(folder)}`);
-    const folderData = await res.json();
+    const folderData: S3Response = await res.json();
     setFolders((prev) => ({
       ...prev,
       [folder]: { ...prev[folder], data: folderData, loading: false },
@@ -228,7 +64,11 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
       const isOpen = prev[folder]?.open;
       return {
         ...prev,
-        [folder]: { ...prev[folder], open: !isOpen, loading: !isOpen && !prev[folder]?.data },
+        [folder]: {
+          ...prev[folder],
+          open: !isOpen,
+          loading: !isOpen && !prev[folder]?.data,
+        },
       };
     });
 
@@ -236,11 +76,17 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
     if (!folders[folder]?.data && !folders[folder]?.loading) {
       try {
         await fetchFolderData(folder);
-      } catch (error: any) {
-        setFolders((prev) => ({
-          ...prev,
-          [folder]: { ...prev[folder], error: error.message, loading: false },
-        }));
+      } catch (error) {
+        if (error instanceof Error) {
+          setFolders((prev) => ({
+            ...prev,
+            [folder]: {
+              ...prev[folder],
+              error: error.message,
+              loading: false,
+            },
+          }));
+        }
       }
     }
   };
@@ -266,7 +112,7 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
       } else {
         await fetchRootData();
       }
-    } catch (e) {
+    } catch {
       alert("Upload failed");
     } finally {
       setUploading(null);
@@ -308,10 +154,16 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                             <ChevronRight className="w-5 h-5 text-gray-500" />
                           )}
                           <Folder className="w-6 h-6 text-blue-500" />
-                          <span className="hover:underline font-medium">{getFolderName(folder)}</span>
+                          <span className="hover:underline font-medium">
+                            {getFolderName(folder)}
+                          </span>
                         </button>
                         {/* Upload icon and input for folder */}
-                        <label htmlFor={inputId} className="ml-2 cursor-pointer" title="Upload file to folder">
+                        <label
+                          htmlFor={inputId}
+                          className="ml-2 cursor-pointer"
+                          title="Upload file to folder"
+                        >
                           <Upload className="w-6 h-6 text-gray-500 hover:text-blue-600 transition" />
                           <input
                             id={inputId}
@@ -326,7 +178,9 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                           />
                         </label>
                         {uploading === folder && (
-                          <span className="ml-2 text-xs text-blue-600 animate-pulse">Uploading...</span>
+                          <span className="ml-2 text-xs text-blue-600 animate-pulse">
+                            Uploading...
+                          </span>
                         )}
                       </div>
                       {/* Accordion content */}
@@ -343,18 +197,27 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                               {/* Nested folders */}
                               {folderState.data.folder.length > 0 && (
                                 <div className="mb-2">
-                                  <div className="font-semibold text-gray-700 text-sm mb-1">Subfolders</div>
+                                  <div className="font-semibold text-gray-700 text-sm mb-1">
+                                    Subfolders
+                                  </div>
                                   <ul>
                                     {folderState.data.folder
                                       .filter((subfolder) => subfolder !== folder)
                                       .map((subfolder) => {
                                         const subInputId = `upload-input-${subfolder}`;
                                         return (
-                                          <li key={subfolder} className="flex items-center gap-2 text-gray-700 px-2 py-1">
+                                          <li
+                                            key={subfolder}
+                                            className="flex items-center gap-2 text-gray-700 px-2 py-1"
+                                          >
                                             <Folder className="w-5 h-5 text-gray-400" />
                                             <span>{getFolderName(subfolder)}</span>
                                             {/* Upload icon and input for subfolder */}
-                                            <label htmlFor={subInputId} className="ml-2 cursor-pointer" title="Upload file to subfolder">
+                                            <label
+                                              htmlFor={subInputId}
+                                              className="ml-2 cursor-pointer"
+                                              title="Upload file to subfolder"
+                                            >
                                               <Upload className="w-5 h-5 text-gray-500 hover:text-blue-600 transition" />
                                               <input
                                                 id={subInputId}
@@ -369,7 +232,9 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                                               />
                                             </label>
                                             {uploading === subfolder && (
-                                              <span className="ml-2 text-xs text-blue-600 animate-pulse">Uploading...</span>
+                                              <span className="ml-2 text-xs text-blue-600 animate-pulse">
+                                                Uploading...
+                                              </span>
                                             )}
                                           </li>
                                         );
@@ -380,7 +245,9 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                               {/* Nested files */}
                               {folderState.data.files.length > 0 && (
                                 <div>
-                                  <div className="font-semibold text-gray-700 text-sm mb-1">Files</div>
+                                  <div className="font-semibold text-gray-700 text-sm mb-1">
+                                    Files
+                                  </div>
                                   <ul>
                                     {folderState.data.files.map((file) => {
                                       const fileInputId = `upload-input-file-${file.Key}`;
@@ -416,7 +283,11 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                                             <Download className="w-5 h-5" />
                                           </a>
                                           {/* Upload icon and input for file */}
-                                          <label htmlFor={fileInputId} className="ml-2 cursor-pointer" title="Upload new version">
+                                          <label
+                                            htmlFor={fileInputId}
+                                            className="ml-2 cursor-pointer"
+                                            title="Upload new version"
+                                          >
                                             <Upload className="w-5 h-5 text-gray-500 hover:text-blue-600 transition" />
                                             <input
                                               id={fileInputId}
@@ -431,7 +302,9 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                                             />
                                           </label>
                                           {uploading === file.Key && (
-                                            <span className="ml-2 text-xs text-blue-600 animate-pulse">Uploading...</span>
+                                            <span className="ml-2 text-xs text-blue-600 animate-pulse">
+                                              Uploading...
+                                            </span>
                                           )}
                                         </li>
                                       );
@@ -440,7 +313,7 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                                 </div>
                               )}
                               {folderState.data.files.length === 0 &&
-                                (folderState.data.folder.filter((subfolder) => subfolder !== folder).length === 0) && (
+                                folderState.data.folder.filter((subfolder) => subfolder !== folder).length === 0 && (
                                   <div className="text-xs text-gray-500">No files or folders found.</div>
                                 )}
                             </>
@@ -475,10 +348,12 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                         {file.Key}
                       </a>
                       <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded">
-                        <span className="font-semibold">Size:</span> {(file.Size / 1024 / 1024).toFixed(2)} MB
+                        <span className="font-semibold">Size:</span>{" "}
+                        {(file.Size / 1024 / 1024).toFixed(2)} MB
                       </span>
                       <span className="text-xs text-gray-500 px-2 py-0.5 bg-gray-100 rounded ml-2">
-                        <span className="font-semibold">Date:</span> {new Date(file.LastModified).toLocaleDateString()}
+                        <span className="font-semibold">Date:</span>{" "}
+                        {new Date(file.LastModified).toLocaleDateString()}
                       </span>
                       <a
                         href={getDownloadUrl(file.Key)}
@@ -490,7 +365,11 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                         <Download className="w-5 h-5" />
                       </a>
                       {/* Upload icon and input for file */}
-                      <label htmlFor={fileInputId} className="ml-2 cursor-pointer" title="Upload new version">
+                      <label
+                        htmlFor={fileInputId}
+                        className="ml-2 cursor-pointer"
+                        title="Upload new version"
+                      >
                         <Upload className="w-5 h-5 text-gray-500 hover:text-blue-600 transition" />
                         <input
                           id={fileInputId}
@@ -505,7 +384,9 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
                         />
                       </label>
                       {uploading === file.Key && (
-                        <span className="ml-2 text-xs text-blue-600 animate-pulse">Uploading...</span>
+                        <span className="ml-2 text-xs text-blue-600 animate-pulse">
+                          Uploading...
+                        </span>
                       )}
                     </li>
                   );
@@ -514,7 +395,9 @@ export default function S3FileExplorer({ data }: { data: S3Response }) {
             </div>
           )}
           {rootData.files.length === 0 && rootData.folder.length === 0 && (
-            <div className="text-gray-500 text-center">No files or folders found.</div>
+            <div className="text-gray-500 text-center">
+              No files or folders found.
+            </div>
           )}
         </div>
       </CardContent>
